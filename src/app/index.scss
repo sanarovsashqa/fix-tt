@@ -1,0 +1,19 @@
+@import 'src/app/scss/mixins.scss';
+
+body {
+  font-family: "Oxanium", sans-serif;
+  background-color: #f7eecd;
+}
+
+.container {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+@include mobile {
+  .container {
+    padding: 20px;
+  }
+}
