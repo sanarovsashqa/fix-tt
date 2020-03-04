@@ -18,7 +18,9 @@ export default function UseFetch(url) {
       }
     };
 
-    fetchData();
+    if (url) {
+      fetchData();
+    }
   }, [url]);
 
   return { response, error, isLoading };

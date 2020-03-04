@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import "./index.scss";
 
 import PokemonsList from "../../components/PokemonsList";
@@ -10,11 +10,25 @@ function PokemonsPage() {
   const [paginationOffset, setPaginationOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(null);
+  const [isStorageChecked, setIsStorageChecked] = useState(false);
   const paginationLimit = 20;
 
   const pokemons = UseFetch(
-    `https://pokeapi.co/api/v2/pokemon/?limit=${paginationLimit}&offset=${paginationOffset}`
+    isStorageChecked ? `https://pokeapi.co/api/v2/pokemon/?limit=${paginationLimit}&offset=${paginationOffset}` : null
   );
+
+  useEffect(() => {
+    const storagePageNumber = Number(sessionStorage.getItem("pageNumber"));
+
+    if (storagePageNumber) {
+      const offset = getPaginationOffset(storagePageNumber);
+
+      setCurrentPage(storagePageNumber);
+      setPaginationOffset(offset);
+    }
+
+    setIsStorageChecked(true);
+  }, []);
 
   useEffect(() => {
     setTotalPages(
@@ -30,28 +44,39 @@ function PokemonsPage() {
     return (pageNumber - 1) * paginationLimit;
   };
 
+  const setStoragePageNumber = number => {
+    sessionStorage.setItem("pageNumber", number);
+  };
+
   const onPrevPageClick = () => {
     if (currentPage > 1) {
       const pageNumber = currentPage - 1;
+      const offset = getPaginationOffset(pageNumber);
 
       setCurrentPage(pageNumber);
-      setPaginationOffset(getPaginationOffset(pageNumber));
+      setStoragePageNumber(pageNumber);
+      setPaginationOffset(offset);
     }
   };
 
   const onNextPageClick = () => {
     if (currentPage < totalPages) {
       const pageNumber = currentPage + 1;
+      const offset = getPaginationOffset(pageNumber);
 
       setCurrentPage(pageNumber);
-      setPaginationOffset(getPaginationOffset(pageNumber));
+      setStoragePageNumber(pageNumber);
+      setPaginationOffset(offset);
     }
   };
 
   const onNumberPageClick = pageNumber => {
     if (pageNumber !== currentPage) {
+      const offset = getPaginationOffset(pageNumber);
+
       setCurrentPage(pageNumber);
-      setPaginationOffset(getPaginationOffset(pageNumber));
+      setStoragePageNumber(pageNumber);
+      setPaginationOffset(offset);
     }
   };
 
